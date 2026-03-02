@@ -1,7 +1,17 @@
+rootProject.name = "credit-conveyor"
 pluginManagement {
-	repositories {
-		maven { url = uri("https://repo.spring.io/snapshot") }
-		gradlePluginPortal()
-	}
+    repositories {
+        maven { url = uri("https://repo.spring.io/snapshot") }
+        gradlePluginPortal()
+    }
 }
-rootProject.name = "credit-conveyors"
+
+include(
+    "conveyor",
+    "deal",
+    "application",
+    "dossier",
+    "gateway",
+    "audit",
+    "auth"
+)
