@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/changeset/001-create-clients-table.sql
+  - include:
+      file: db/changelog/changeset/002-create-credits-table.sql
+  - include:
+      file: db/changelog/changeset/003-create-applications-table.sql
