@@ -25,12 +25,29 @@ subprojects {
     apply(plugin = "java")
     apply(plugin = "io.spring.dependency-management")
 
+
     dependencies {
-        testImplementation("org.junit.jupiter:junit-jupiter")
+        testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
+//        testImplementation("org.junit.jupiter:junit-jupiter")
     }
 
     tasks.withType<Test> {
         useJUnitPlatform()
+    }
+
+    tasks.withType<JavaExec> {
+        val port = project.findProperty("jmxPort")?.toString()
+
+        if (port != null) {
+            jvmArgs = listOf(
+                "-Dcom.sun.management.jmxremote",
+                "-Dcom.sun.management.jmxremote.port=$port",
+                "-Dcom.sun.management.jmxremote.rmi.port=$port",
+                "-Dcom.sun.management.jmxremote.authenticate=false",
+                "-Dcom.sun.management.jmxremote.ssl=false",
+                "-Djava.rmi.server.hostname=localhost"
+            )
+        }
     }
 }
 
