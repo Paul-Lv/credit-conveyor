@@ -15,9 +15,9 @@ feign:
 
 services:
   application:
-    url: http://localhost:8082
+    url: http://application:8082
   deal:
-    url: http://localhost:8081
+    url: http://deal:8081
 
 logging:
   level:

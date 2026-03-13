@@ -14,4 +14,4 @@ feign:
         loggerLevel: full
 
 deal:
-  url: http://localhost:8081
+  url: http://deal:8081
