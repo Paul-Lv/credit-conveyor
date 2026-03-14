@@ -2,6 +2,8 @@ plugins {
     java
     id("org.springframework.boot") version "3.2.3" apply false
     id("io.spring.dependency-management") version "1.1.4" apply false
+    id("jacoco")
+    id("org.sonarqube") version "4.4.1.3373" // Убрал apply false!
 }
 
 java {
@@ -10,7 +12,6 @@ java {
     }
 }
 
-//
 allprojects {
     group = "com.example"
     version = "0.0.1-SNAPSHOT"
@@ -24,20 +25,27 @@ allprojects {
 subprojects {
     apply(plugin = "java")
     apply(plugin = "io.spring.dependency-management")
-
+    apply(plugin = "jacoco")
 
     dependencies {
         testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
-//        testImplementation("org.junit.jupiter:junit-jupiter")
     }
 
     tasks.withType<Test> {
         useJUnitPlatform()
+        finalizedBy(tasks.jacocoTestReport)
+    }
+
+    tasks.jacocoTestReport {
+        dependsOn(tasks.test)
+        reports {
+            xml.required.set(true)
+            html.required.set(true)
+        }
     }
 
     tasks.withType<JavaExec> {
         val port = project.findProperty("jmxPort")?.toString()
-
         if (port != null) {
             jvmArgs = listOf(
                 "-Dcom.sun.management.jmxremote",
@@ -51,17 +59,13 @@ subprojects {
     }
 }
 
-//repositories {
-//	mavenCentral()
-//	maven { url = uri("https://repo.spring.io/snapshot") }
-//}
-//
-//dependencies {
-//	implementation("org.springframework.boot:spring-boot-starter")
-//	testImplementation("org.springframework.boot:spring-boot-starter-test")
-//	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-//}
-//
-//tasks.withType<Test> {
-//	useJUnitPlatform()
-//}
+// SonarQube configuration for root project
+sonarqube {
+    properties {
+        property("sonar.projectKey", "Paul-Lv_credit-conveyor")
+        property("sonar.organization", "paul-lv")
+        property("sonar.host.url", "https://sonarcloud.io")
+        property("sonar.coverage.jacoco.xmlReportPaths", "./**/build/reports/jacoco/test/jacocoTestReport.xml")
+        property("sonar.gradle.skipCompile", "true")
+    }
+}
