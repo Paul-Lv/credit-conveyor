@@ -1,8 +1,8 @@
 package com.example.conveyor.controller;
 
-import com.example.conveyor.dto.LoanApplicationRequestDTO;
-import com.example.conveyor.dto.LoanOfferDTO;
-import com.example.conveyor.dto.ScoringDataDTO;
+import com.example.dto.LoanApplicationRequestDTO;
+import com.example.dto.LoanOfferDTO;
+import com.example.dto.ScoringDataDTO;
 import com.example.conveyor.dto.CreditDTO;
 import com.example.conveyor.service.ConveyorService;
 import io.swagger.v3.oas.annotations.Operation;

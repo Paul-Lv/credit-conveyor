@@ -1,7 +1,7 @@
 package com.example.deal.entity;
 
-import com.example.deal.dto.EmploymentDTO;
-import com.example.deal.dto.LoanApplicationRequestDTO;
+import com.example.dto.EmploymentDTO;
+import com.example.dto.LoanApplicationRequestDTO;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;

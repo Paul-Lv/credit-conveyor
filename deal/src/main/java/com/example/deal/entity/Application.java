@@ -1,6 +1,6 @@
 package com.example.deal.entity;
 
-import com.example.deal.dto.LoanOfferDTO;
+import com.example.dto.LoanOfferDTO;
 import com.example.deal.enums.ApplicationStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

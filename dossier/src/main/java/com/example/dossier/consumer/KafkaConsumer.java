@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -64,6 +66,6 @@ public class KafkaConsumer {
     }
 
     private String generateSesCode() {
-        return String.valueOf((int) (Math.random() * 9000 + 1000));
+        return String.valueOf(ThreadLocalRandom.current().nextInt(1000, 10000));
     }
 }

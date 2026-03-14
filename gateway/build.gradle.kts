@@ -5,6 +5,7 @@ plugins {
 
 
 dependencies {
+    implementation(project(":common-dto"))
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.cloud:spring-cloud-starter-openfeign:4.1.0")
     implementation("org.projectlombok:lombok")

@@ -1,8 +1,8 @@
 package com.example.gateway.controller;
 
-import com.example.gateway.dto.FinishRegistrationRequestDTO;
-import com.example.gateway.dto.LoanApplicationRequestDTO;
-import com.example.gateway.dto.LoanOfferDTO;
+import com.example.dto.FinishRegistrationRequestDTO;
+import com.example.dto.LoanApplicationRequestDTO;
+import com.example.dto.LoanOfferDTO;
 import com.example.gateway.feign.ApplicationClient;
 import com.example.gateway.feign.DealClient;
 import io.swagger.v3.oas.annotations.Operation;

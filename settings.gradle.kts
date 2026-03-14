@@ -7,6 +7,7 @@ pluginManagement {
 }
 
 include(
+    "common-dto",
     "conveyor",
     "deal",
     "application",

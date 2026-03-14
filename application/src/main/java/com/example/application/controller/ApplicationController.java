@@ -1,8 +1,8 @@
 package com.example.application.controller;
 
 
-import com.example.application.dto.LoanApplicationRequestDTO;
-import com.example.application.dto.LoanOfferDTO;
+import com.example.dto.LoanApplicationRequestDTO;
+import com.example.dto.LoanOfferDTO;
 import com.example.application.service.ApplicationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
