@@ -1,8 +1,8 @@
-package com.example.gateway.dto;
+package com.example.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 import java.math.BigDecimal;
 

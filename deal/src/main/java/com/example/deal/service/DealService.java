@@ -1,7 +1,11 @@
 package com.example.deal.service;
 
-import com.example.deal.dto.*;
-import com.example.deal.entity.*;
+import com.example.deal.dto.CreditDTO;
+import com.example.deal.dto.EmailMessage;
+import com.example.deal.entity.Application;
+import com.example.deal.entity.ApplicationStatusHistory;
+import com.example.deal.entity.Client;
+import com.example.deal.entity.Credit;
 import com.example.deal.enums.ApplicationStatus;
 import com.example.deal.feign.ConveyorClient;
 import com.example.deal.mapper.ClientMapper;
@@ -9,6 +13,10 @@ import com.example.deal.mapper.CreditMapper;
 import com.example.deal.repository.ApplicationRepository;
 import com.example.deal.repository.ClientRepository;
 import com.example.deal.repository.CreditRepository;
+import com.example.dto.FinishRegistrationRequestDTO;
+import com.example.dto.LoanApplicationRequestDTO;
+import com.example.dto.LoanOfferDTO;
+import com.example.dto.ScoringDataDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -38,7 +46,6 @@ public class DealService {
         log.info("Creating application for request: {}", request);
 
         // Создаем и сохраняем клиента
-//        Client client = Client.fromLoanApplicationRequest(request);
         Client client = clientMapper.toEntity(request);
         client = clientRepository.save(client);
         log.info("Client saved with id: {}", client.getId());

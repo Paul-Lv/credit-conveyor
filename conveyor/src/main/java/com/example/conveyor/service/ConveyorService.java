@@ -1,9 +1,9 @@
 package com.example.conveyor.service;
 
 import com.example.conveyor.dto.CreditDTO;
-import com.example.conveyor.dto.LoanApplicationRequestDTO;
-import com.example.conveyor.dto.LoanOfferDTO;
-import com.example.conveyor.dto.ScoringDataDTO;
+import com.example.dto.LoanApplicationRequestDTO;
+import com.example.dto.LoanOfferDTO;
+import com.example.dto.ScoringDataDTO;
 
 import java.util.List;
 

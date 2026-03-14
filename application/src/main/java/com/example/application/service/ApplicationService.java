@@ -1,7 +1,7 @@
 package com.example.application.service;
 
-import com.example.application.dto.LoanApplicationRequestDTO;
-import com.example.application.dto.LoanOfferDTO;
+import com.example.dto.LoanApplicationRequestDTO;
+import com.example.dto.LoanOfferDTO;
 import com.example.application.feign.DealClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

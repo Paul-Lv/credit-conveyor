@@ -1,6 +1,9 @@
 package com.example.conveyor.service;
 
 import com.example.conveyor.dto.*;
+import com.example.dto.LoanApplicationRequestDTO;
+import com.example.dto.LoanOfferDTO;
+import com.example.dto.ScoringDataDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
