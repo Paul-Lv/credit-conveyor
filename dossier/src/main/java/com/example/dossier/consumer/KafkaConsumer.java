@@ -7,13 +7,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
-import java.util.concurrent.ThreadLocalRandom;
+import java.security.SecureRandom;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class KafkaConsumer {
 
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
     private final EmailService emailService;
 
     @KafkaListener(topics = "finish-registration", groupId = "dossier-group")
@@ -66,6 +67,6 @@ public class KafkaConsumer {
     }
 
     private String generateSesCode() {
-        return String.valueOf(ThreadLocalRandom.current().nextInt(1000, 10000));
+        return String.valueOf(SECURE_RANDOM.nextInt(9000) + 1000);
     }
 }
