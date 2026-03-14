@@ -3,6 +3,10 @@ package com.example.validation;
 import java.math.BigDecimal;
 
 public class ValidationConstants {
+
+    private ValidationConstants() {
+    }
+
     public static final BigDecimal MIN_AMOUNT = new BigDecimal("10000");
     public static final Integer MIN_TERM = 6;
     public static final Integer ADULT_AGE = 18;

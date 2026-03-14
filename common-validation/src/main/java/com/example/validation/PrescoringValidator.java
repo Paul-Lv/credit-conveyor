@@ -8,6 +8,9 @@ import java.util.regex.Pattern;
 
 public class PrescoringValidator {
 
+    private PrescoringValidator() {
+    }
+
     public static void validate(LoanApplicationRequestDTO request) {
         validateAmount(request);
         validateTerm(request);

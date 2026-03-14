@@ -87,3 +87,4 @@ jobs:
             docker build -t ${{ secrets.DOCKER_USERNAME }}/credit-$service:latest ./$service
             docker push ${{ secrets.DOCKER_USERNAME }}/credit-$service:latest
           done
+          
