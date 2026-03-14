@@ -8,6 +8,7 @@ pluginManagement {
 
 include(
     "common-dto",
+    "common-validation",
     "conveyor",
     "deal",
     "application",
