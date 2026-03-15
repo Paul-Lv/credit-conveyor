@@ -1,4 +1,4 @@
-package com.example.conveyor.dto;
+package com.example.dto;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

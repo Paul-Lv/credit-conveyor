@@ -1,9 +1,9 @@
 package com.example.deal.feign;
 
 import com.example.deal.dto.CreditDTO;
-import com.example.deal.dto.LoanApplicationRequestDTO;
-import com.example.deal.dto.LoanOfferDTO;
-import com.example.deal.dto.ScoringDataDTO;
+import com.example.dto.LoanApplicationRequestDTO;
+import com.example.dto.LoanOfferDTO;
+import com.example.dto.ScoringDataDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

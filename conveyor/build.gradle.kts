@@ -4,6 +4,8 @@ plugins {
 }
 
 dependencies {
+    implementation(project(":common-dto"))
+    implementation(project(":common-validation"))
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-validation")
 
