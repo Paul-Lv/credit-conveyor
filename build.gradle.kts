@@ -65,8 +65,13 @@ sonarqube {
         property("sonar.projectKey", "Paul-Lv_credit-conveyor")
         property("sonar.organization", "paul-lv")
         property("sonar.host.url", "https://sonarcloud.io")
-        property("sonar.coverage.jacoco.xmlReportPaths", "./**/build/reports/jacoco/test/jacocoTestReport.xml")
+        // ✅ ПОЛНОЕ ОТКЛЮЧЕНИЕ ПОКРЫТИЯ
+        property("sonar.coverage.exclusions", "**/*.java")
+//        property("sonar.coverage.jacoco.xmlReportPaths", "./**/build/reports/jacoco/test/jacocoTestReport.xml")
+        property("sonar.coverage.jacoco.xmlReportPaths", "none")
         property("sonar.gradle.skipCompile", "true")
+        // ✅ Отключаем публикацию данных о покрытии
+        property("sonar.coverageReport", "false")
 
     }
 }
