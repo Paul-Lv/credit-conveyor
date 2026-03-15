@@ -1,9 +1,10 @@
-package com.example.deal.dto;
+package com.example.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+
 import java.time.LocalDate;
 
 @Data

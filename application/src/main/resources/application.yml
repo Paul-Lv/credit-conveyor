@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: application
+
+server:
+  port: 8082
+
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 5000
+        loggerLevel: full
+
+deal:
+  url: http://deal:8081

@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: dossier
+
+  kafka:
+    bootstrap-servers: kafka:9092
+    consumer:
+      group-id: dossier-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.type.mapping: emailMessage:com.example.dossier.dto.EmailMessage
+        spring.json.trusted.packages: "*"
+
+server:
+  port: 8083
+
+logging:
+  level:
+    com.example.dossier: DEBUG

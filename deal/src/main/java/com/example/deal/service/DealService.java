@@ -1,12 +1,22 @@
 package com.example.deal.service;
 
-import com.example.deal.dto.*;
-import com.example.deal.entity.*;
+import com.example.deal.dto.CreditDTO;
+import com.example.deal.dto.EmailMessage;
+import com.example.deal.entity.Application;
+import com.example.deal.entity.ApplicationStatusHistory;
+import com.example.deal.entity.Client;
+import com.example.deal.entity.Credit;
 import com.example.deal.enums.ApplicationStatus;
 import com.example.deal.feign.ConveyorClient;
+import com.example.deal.mapper.ClientMapper;
+import com.example.deal.mapper.CreditMapper;
 import com.example.deal.repository.ApplicationRepository;
 import com.example.deal.repository.ClientRepository;
 import com.example.deal.repository.CreditRepository;
+import com.example.dto.FinishRegistrationRequestDTO;
+import com.example.dto.LoanApplicationRequestDTO;
+import com.example.dto.LoanOfferDTO;
+import com.example.dto.ScoringDataDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,17 +32,21 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class DealService {
 
+    private final ClientMapper clientMapper;
+    private final CreditMapper creditMapper;
     private final ClientRepository clientRepository;
     private final ApplicationRepository applicationRepository;
     private final CreditRepository creditRepository;
     private final ConveyorClient conveyorClient;
+
+    private final KafkaProducerService kafkaProducerService;
 
     @Transactional
     public List<LoanOfferDTO> createApplication(LoanApplicationRequestDTO request) {
         log.info("Creating application for request: {}", request);
 
         // Создаем и сохраняем клиента
-        Client client = Client.fromLoanApplicationRequest(request);
+        Client client = clientMapper.toEntity(request);
         client = clientRepository.save(client);
         log.info("Client saved with id: {}", client.getId());
 
@@ -87,29 +101,51 @@ public class DealService {
 
         applicationRepository.save(application);
         log.info("Offer applied successfully");
+
+        // После обновления статуса
+        EmailMessage emailMessage = new EmailMessage(
+                application.getClient().getEmail(),
+                "Завершите регистрацию",
+                "Ваша заявка предварительно одобрена. Пожалуйста, завершите регистрацию.",
+                "finish-registration"
+        );
+        kafkaProducerService.sendMessage("finish-registration", emailMessage);
     }
 
     @Transactional
     public void calculateCredit(UUID applicationId, FinishRegistrationRequestDTO request) {
         log.info("Calculating credit for application: {} with request: {}", applicationId, request);
 
+        // 1. Получаем заявку из БД
         Application application = applicationRepository.findById(applicationId)
                 .orElseThrow(() -> new RuntimeException("Application not found"));
 
         Client client = application.getClient();
 
-        // Обновляем данные клиента
-        client.setGender(request.getGender() != null ? request.getGender().name() : null);
-        client.setMaritalStatus(request.getMaritalStatus() != null ? request.getMaritalStatus().name() : null);
-        client.setDependentAmount(request.getDependentAmount());
-        client.setPassportIssueDate(request.getPassportIssueDate());
-        client.setPassportIssueBranch(request.getPassportIssueBranch());
-        client.setEmployment(request.getEmployment());
-        client.setAccount(request.getAccount());
+        // 2. Обновляем данные клиента через маппер
+        // Создаём базовый запрос из данных, которые уже есть в клиенте
+        LoanApplicationRequestDTO loanRequest = new LoanApplicationRequestDTO();
+        loanRequest.setAmount(application.getAppliedOffer().getRequestedAmount());
+        loanRequest.setTerm(application.getAppliedOffer().getTerm());
+        loanRequest.setFirstName(client.getFirstName());
+        loanRequest.setLastName(client.getLastName());
+        loanRequest.setMiddleName(client.getMiddleName());
+        loanRequest.setEmail(client.getEmail());
+        loanRequest.setBirthdate(client.getBirthDate());
+        loanRequest.setPassportSeries(client.getPassportSeries());
+        loanRequest.setPassportNumber(client.getPassportNumber());
 
-        clientRepository.save(client);
+        // Маппер объединяет данные из FinishRegistrationRequestDTO и LoanApplicationRequestDTO
+        Client updatedClient = clientMapper.toEntity(request, loanRequest);
+        // Важно: сохраняем ID и дату создания от старого клиента
+        updatedClient.setId(client.getId());
+        updatedClient.setCreationDate(client.getCreationDate());
 
-        // Создаем ScoringDataDTO для отправки в conveyor
+        // Сохраняем обновлённого клиента
+        client = clientRepository.save(updatedClient);
+        log.info("Client updated with id: {}", client.getId());
+
+        // 3. Создаём ScoringDataDTO для отправки в conveyor
         ScoringDataDTO scoringData = new ScoringDataDTO();
         scoringData.setAmount(application.getAppliedOffer().getRequestedAmount());
         scoringData.setTerm(application.getAppliedOffer().getTerm());
@@ -129,35 +165,40 @@ public class DealService {
         scoringData.setIsInsuranceEnabled(application.getAppliedOffer().getIsInsuranceEnabled());
         scoringData.setIsSalaryClient(application.getAppliedOffer().getIsSalaryClient());
 
-        // Получаем расчет от conveyor
+        // 4. Получаем расчёт от conveyor
         CreditDTO creditDTO = conveyorClient.calculateCredit(scoringData);
+        log.info("Received credit calculation from conveyor");
 
-        // Создаем и сохраняем кредит
-        Credit credit = new Credit();
-        credit.setAmount(creditDTO.getAmount());
-        credit.setTerm(creditDTO.getTerm());
-        credit.setMonthlyPayment(creditDTO.getMonthlyPayment());
-        credit.setRate(creditDTO.getRate());
-        credit.setPsk(creditDTO.getPsk());
-        credit.setPaymentSchedule(creditDTO.getPaymentSchedule());
-        credit.setInsuranceEnabled(creditDTO.getIsInsuranceEnabled());
-        credit.setSalaryClient(creditDTO.getIsSalaryClient());
-
+        // 5. Создаём кредит через маппер (ВОТ ЗДЕСЬ ТОЖЕ ИЗМЕНЕНИЯ)
+        Credit credit = creditMapper.toEntity(creditDTO);
         credit = creditRepository.save(credit);
         log.info("Credit saved with id: {}", credit.getId());
 
-        // Обновляем заявку
+        // 6. Обновляем заявку
         application.setCredit(credit);
         application.setStatus(ApplicationStatus.CLIENT_DOCUMENT_REQUESTED);
 
         List<ApplicationStatusHistory> statusHistory = application.getStatusHistory();
+        if (statusHistory == null) {
+            statusHistory = new ArrayList<>();
+        }
         statusHistory.add(new ApplicationStatusHistory(
                 ApplicationStatus.CLIENT_DOCUMENT_REQUESTED,
                 LocalDateTime.now(),
                 "Credit calculated"
         ));
+        application.setStatusHistory(statusHistory);
 
         applicationRepository.save(application);
         log.info("Credit calculation completed");
+
+        // 7. Отправляем событие в Kafka (для Level 4)
+        EmailMessage emailMessage = new EmailMessage(
+                client.getEmail(),
+                "Создание документов",
+                "Ваши документы готовы. Пожалуйста, запросите их отправку.",
+                "create-documents"
+        );
+        kafkaProducerService.sendMessage("create-documents", emailMessage);
     }
 }
