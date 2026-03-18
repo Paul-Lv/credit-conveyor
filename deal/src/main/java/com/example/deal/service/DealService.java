@@ -38,8 +38,8 @@ public class DealService {
     private final ApplicationRepository applicationRepository;
     private final CreditRepository creditRepository;
     private final ConveyorClient conveyorClient;
-
     private final KafkaProducerService kafkaProducerService;
+    private final ApplicationMetricsService metricsService;
 
     @Transactional
     public List<LoanOfferDTO> createApplication(LoanApplicationRequestDTO request) {
@@ -73,7 +73,7 @@ public class DealService {
 
         // Устанавливаем applicationId в каждом оффере
         offers.forEach(offer -> offer.setApplicationId(applicationId.toString()));
-
+        metricsService.incrementStatusCount(ApplicationStatus.PREAPPROVAL);
         return offers;
     }
 
@@ -100,6 +100,7 @@ public class DealService {
         application.setStatusHistory(statusHistory);
 
         applicationRepository.save(application);
+        metricsService.incrementStatusCount(ApplicationStatus.APPROVED);
         log.info("Offer applied successfully");
 
         // После обновления статуса
@@ -190,6 +191,7 @@ public class DealService {
         application.setStatusHistory(statusHistory);
 
         applicationRepository.save(application);
+        metricsService.incrementStatusCount(ApplicationStatus.CLIENT_DOCUMENT_REQUESTED);
         log.info("Credit calculation completed");
 
         // 7. Отправляем событие в Kafka (для Level 4)

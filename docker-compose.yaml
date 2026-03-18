@@ -24,6 +24,8 @@ services:
     restart: unless-stopped
     networks:
       - credit-network
+    volumes:
+      - zookeeper_data:/opt/zookeeper-3.4.13/data
 
   kafka:
     image: wurstmeister/kafka
@@ -122,12 +124,41 @@ services:
       - application
       - deal
 
-volumes:
-  postgres_data:
-  zookeeper_data:
-  kafka_data:
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: credit-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    restart: unless-stopped
+    networks:
+      - credit-network
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: credit-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_SECURITY_ADMIN_USER=admin
+    volumes:
+      - grafana_data:/var/lib/grafana
+    restart: unless-stopped
+    depends_on:
+      - prometheus
+    networks:
+      - credit-network
 
 networks:
   credit-network:
     driver: bridge
 
+volumes:
+  postgres_data:
+  zookeeper_data:
+  kafka_data:
+  prometheus_data:
+  grafana_data:
