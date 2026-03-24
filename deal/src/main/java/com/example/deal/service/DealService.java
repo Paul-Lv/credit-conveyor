@@ -1,5 +1,6 @@
 package com.example.deal.service;
 
+import com.example.audit.annotation.AuditAction;
 import com.example.deal.dto.CreditDTO;
 import com.example.deal.dto.EmailMessage;
 import com.example.deal.entity.Application;
@@ -41,6 +42,7 @@ public class DealService {
     private final KafkaProducerService kafkaProducerService;
     private final ApplicationMetricsService metricsService;
 
+    @AuditAction
     @Transactional
     public List<LoanOfferDTO> createApplication(LoanApplicationRequestDTO request) {
         log.info("Creating application for request: {}", request);
@@ -77,6 +79,7 @@ public class DealService {
         return offers;
     }
 
+    @AuditAction
     @Transactional
     public void applyOffer(LoanOfferDTO offer) {
         log.info("Applying offer: {}", offer);
@@ -113,6 +116,7 @@ public class DealService {
         kafkaProducerService.sendMessage("finish-registration", emailMessage);
     }
 
+    @AuditAction
     @Transactional
     public void calculateCredit(UUID applicationId, FinishRegistrationRequestDTO request) {
         log.info("Calculating credit for application: {} with request: {}", applicationId, request);

@@ -1,9 +1,11 @@
 package com.example.gateway.controller;
 
+import com.example.audit.dto.AuditEvent;
 import com.example.dto.FinishRegistrationRequestDTO;
 import com.example.dto.LoanApplicationRequestDTO;
 import com.example.dto.LoanOfferDTO;
 import com.example.gateway.feign.ApplicationClient;
+import com.example.gateway.feign.AuditClient;
 import com.example.gateway.feign.DealClient;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,6 +26,7 @@ public class GatewayController {
 
     private final ApplicationClient applicationClient;
     private final DealClient dealClient;
+    private final AuditClient auditClient;
 
     @PostMapping("/application")
     @Operation(summary = "Создать заявку")
@@ -66,5 +69,23 @@ public class GatewayController {
         log.info("Gateway: admin getAllApplications called");
         List<Object> applications = dealClient.getAllApplications();
         return ResponseEntity.ok(applications);
+    }
+
+    // === AUDIT ENDPOINTS ===
+
+    @GetMapping("/audit/{id}")
+    @Operation(summary = "Получить событие аудита по ID")
+    public ResponseEntity<AuditEvent> getAuditById(@PathVariable UUID id) {
+        log.info("Gateway: getAuditById called for id: {}", id);
+        AuditEvent event = auditClient.getAuditById(id);
+        return ResponseEntity.ok(event);
+    }
+
+    @GetMapping("/audit")
+    @Operation(summary = "Получить все события аудита")
+    public ResponseEntity<List<AuditEvent>> getAllAuditEvents() {
+        log.info("Gateway: getAllAuditEvents called");
+        List<AuditEvent> events = auditClient.getAllAuditEvents();
+        return ResponseEntity.ok(events);
     }
 }

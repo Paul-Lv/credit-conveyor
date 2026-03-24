@@ -7,6 +7,7 @@ pluginManagement {
 }
 
 include(
+    "common-audit",
     "common-dto",
     "common-validation",
     "conveyor",

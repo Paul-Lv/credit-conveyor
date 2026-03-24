@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: audit
+  data:
+    redis:
+      host: redis
+      port: 6379
+  kafka:
+    bootstrap-servers: kafka:9092
+    consumer:
+      group-id: audit-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+
+server:
+  port: 8085
+
+audit:
+  kafka:
+    topic: audit
+
+logging:
+  level:
+    com.example.audit: DEBUG

@@ -18,6 +18,8 @@ services:
     url: http://application:8082
   deal:
     url: http://deal:8081
+  audit:
+    url: http://audit:8085
 
 logging:
   level:

@@ -5,6 +5,8 @@ plugins {
 
 dependencies {
     implementation(project(":common-dto"))
+    implementation(project(":common-validation"))
+    implementation(project(":common-audit"))
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.postgresql:postgresql")
